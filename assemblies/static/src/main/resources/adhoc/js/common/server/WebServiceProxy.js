@@ -1,5 +1,5 @@
 /*
-* Copyright 2002 - 2017 Hitachi Vantara.  All rights reserved.
+* Copyright 2002 - 2019 Hitachi Vantara.  All rights reserved.
 *
 * This software was developed by Hitachi Vantara and is provided under the terms
 * of the Mozilla Public License, Version 1.1, or any later version. You may not use
@@ -11,15 +11,18 @@
 * the license for the specific language governing your rights and limitations.
 */
 
- document.write("<script type='text/javascript' src='webcontext.js'></script>");
+/* globals pentahoPost */
+
+document.write("<script type='text/javascript' src='webcontext.js'></script>");
+
 /**
  * This class provides a mechanism for calling a Hitachi Vantara WebService using AJAX techniques.
  * This is a stateless, static class, you should never call the ctor
  */
-WebServiceProxy = function()
-{
+WebServiceProxy = function() {
 	throw new Error( Messages.getString("CTOR_CALL_UNNEEDED") );
-}
+};
+
 /*static*/WebServiceProxy.ADHOC_WEBSERVICE_URL = CONTEXT_PATH + "AdhocWebService";
 
 /*static*/WebServiceProxy.msgCtrl = new MessageCtrl();
@@ -39,13 +42,14 @@ WebServiceProxy = function()
  *                              set to undefined, otherwise it will be passed the XML document (XDocument, see dom.js)
  *                              return be the server.
  * @param {String} [mimeType] - String specifying the mime type, usually text/xml, text/text, tea/bag
+ * @param {Object} [csrfToken] - token for csrf protection
  *
  * @return returns null if called asynchronously. When called synchronously, if the user
  *         session has expired, it returns undefined, else returns the xml document
  *         (XDocument, see dom.js) which has been initialized by the xml
  *         string returned by the server.
  */
-WebServiceProxy.post = function(url, component, params, callback, mimeType) {
+WebServiceProxy.post = function(url, component, params, callback, mimeType, csrfToken) {
   var query = "";
 
   if (!params) {
@@ -68,12 +72,12 @@ WebServiceProxy.post = function(url, component, params, callback, mimeType) {
   if (callback) {
     pentahoPost(url, query, function(response) {
       WebServiceProxy.handleResponse(response, callback);
-    }, mimeType);
+    }, mimeType, csrfToken);
 
     return null;
   }
 
-  var response = pentahoPost(url, query, undefined, mimeType);
+  var response = pentahoPost(url, query, undefined, mimeType, csrfToken);
 
   return WebServiceProxy.handleResponse(response, callback); // callback should be undefined
 };

@@ -11,6 +11,8 @@
 * the license for the specific language governing your rights and limitations.
 */
 
+/* globals csrfUtil */
+
 AclEditorController = function(dialog) {
   this.dialog = dialog;
 
@@ -151,8 +153,9 @@ AclEditorController.prototype.loadUsers = function(onLoadHandler) {
     action:"securitydetails",
     details:"users"
   };
+  var csrfToken = csrfUtil.getToken(url);
 
-  WebServiceProxy.post(url, undefined, parameters, onLoadHandler);
+  WebServiceProxy.post(url, undefined, parameters, onLoadHandler, undefined, csrfToken);
 };
 
 AclEditorController.prototype.loadRoles = function(onLoadHandler) {
@@ -161,8 +164,9 @@ AclEditorController.prototype.loadRoles = function(onLoadHandler) {
     action:"securitydetails",
     details:"roles"
   };
+  var csrfToken = csrfUtil.getToken(url);
 
-  WebServiceProxy.post(url, undefined, parameters, onLoadHandler);
+  WebServiceProxy.post(url, undefined, parameters, onLoadHandler, undefined, csrfToken);
 };
 
 AclEditorController.prototype.canEnableOkBtn = function() {
